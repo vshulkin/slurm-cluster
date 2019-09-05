@@ -24,7 +24,8 @@ slurm_cluster = {
 $nodescript = <<NODESCRIPT
 set -x
 yum -y upgrade
-yum install -y epel-release pdsh
+yum -y install epel-release 
+yum -y install pdsh
 
 sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
 systemctl restart sshd
@@ -38,8 +39,8 @@ $headnode_script = <<HEADNODESCRIPT
 set -xe
 
 yum -y upgrade
-yum install -y epel-release
-yum install -y stress-ng pdsh bind-utils expect gcc make sshpass git gtk2-devel hdf5-devel hwloc hwloc-devel hwloc-gui libibmad libibumad libcurl libssh2-devel lua lua-devel man man2html mariadb mariadb-devel mariadb-server munge munge-devel munge-libs net-tools ncurses-devel nfs-utils numactl numactl-devel openssh-server openssl-devel pam-devel perl-ExtUtils-MakeMaker python-pip readline-devel rpm-build rrdtool-devel screen vim wget rpm-devel perl-Switch postfix mailx
+yum -y install epel-release
+yum -y install stress-ng pdsh bind-utils expect gcc make sshpass git gtk2-devel hdf5-devel hwloc hwloc-devel hwloc-gui libibmad libibumad libcurl libssh2-devel lua lua-devel man man2html mariadb mariadb-devel mariadb-server munge munge-devel munge-libs net-tools ncurses-devel nfs-utils numactl numactl-devel openssh-server openssl-devel pam-devel perl-ExtUtils-MakeMaker python-pip readline-devel rpm-build rrdtool-devel screen vim wget rpm-devel perl-Switch postfix mailx
 
 if [[ ! -e "/etc/PDSH" ]]; then
     mkdir /etc/PDSH
@@ -94,7 +95,7 @@ systemctl enable mariadb
 systemctl start mariadb
 systemctl status mariadb
 
-mysql -e "DROP USER 'slurm'@'localhost'"
+mysql -e "DROP USER 'slurm'@'localhost'" >/dev/null 2>&1 || true
 mysql -e "CREATE USER 'slurm'@'localhost' identified by 'password';"
 mysql -e "GRANT ALL ON slurm_acct_db.* TO 'slurm'@'localhost';"
 
