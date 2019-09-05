@@ -52,7 +52,6 @@ sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_
 systemctl restart sshd
 
 echo "slurm" > /tmp/pass.txt
-whoami
 
 for node in node00 node01
 do 
