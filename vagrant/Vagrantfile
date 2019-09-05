@@ -37,6 +37,10 @@ NODESCRIPT
 $headnode_script = <<HEADNODESCRIPT
 set -xe
 
+yum -y upgrade
+yum install -y epel-release
+yum install -y stress-ng pdsh bind-utils expect gcc make sshpass git gtk2-devel hdf5-devel hwloc hwloc-devel hwloc-gui libibmad libibumad libcurl libssh2-devel lua lua-devel man man2html mariadb mariadb-devel mariadb-server munge munge-devel munge-libs net-tools ncurses-devel nfs-utils numactl numactl-devel openssh-server openssl-devel pam-devel perl-ExtUtils-MakeMaker python-pip readline-devel rpm-build rrdtool-devel screen vim wget rpm-devel perl-Switch postfix mailx
+
 if [[ ! -e "/etc/PDSH" ]]; then
     mkdir /etc/PDSH
 fi
@@ -58,9 +62,7 @@ do
     sshpass -f /tmp/pass.txt ssh-copy-id -f -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa root@$node
 done
 
-yum -y upgrade
-yum install -y epel-release
-yum install -y stress-ng pdsh bind-utils expect gcc make sshpass git gtk2-devel hdf5-devel hwloc hwloc-devel hwloc-gui libibmad libibumad libcurl libssh2-devel lua lua-devel man man2html mariadb mariadb-devel mariadb-server munge munge-devel munge-libs net-tools ncurses-devel nfs-utils numactl numactl-devel openssh-server openssl-devel pam-devel perl-ExtUtils-MakeMaker python-pip readline-devel rpm-build rrdtool-devel screen vim wget rpm-devel perl-Switch postfix mailx
+
 
 dd if=/dev/urandom of=/etc/munge/munge.key iflag=fullblock bs=1024 count=1
 chown munge:munge /etc/munge/munge.key
