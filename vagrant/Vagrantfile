@@ -22,7 +22,6 @@ slurm_cluster = {
 
 # Provisioning inline script for all nodes
 $nodescript = <<NODESCRIPT
-set -x
 yum -y upgrade
 yum -y install epel-release 
 yum -y install pdsh
@@ -36,8 +35,6 @@ NODESCRIPT
 
 # provisioning script for the head node
 $headnode_script = <<HEADNODESCRIPT
-set -xe
-
 yum -y upgrade
 yum -y install epel-release
 yum -y install stress-ng pdsh bind-utils expect gcc make sshpass git gtk2-devel hdf5-devel hwloc hwloc-devel hwloc-gui libibmad libibumad libcurl libssh2-devel lua lua-devel man man2html mariadb mariadb-devel mariadb-server munge munge-devel munge-libs net-tools ncurses-devel nfs-utils numactl numactl-devel openssh-server openssl-devel pam-devel perl-ExtUtils-MakeMaker python-pip readline-devel rpm-build rrdtool-devel screen vim wget rpm-devel perl-Switch postfix mailx
@@ -160,6 +157,12 @@ systemctl status slurmctld
 echo "Run scontrol reconfigure"
 scontrol reconfigure
 
+for node in node00 node01
+do 
+    scontrol update NodeName=${node} State=Down Reason="none"
+    scontrol update NodeName=${node} State=Resume
+done
+
 
 HEADNODESCRIPT
 
@@ -182,7 +185,7 @@ Vagrant.configure("2") do |global_config|
             # VM specifications
             config.vm.provider :virtualbox do |v|
                 v.cpus = 2
-                v.memory = 1024
+                v.memory = 1536
             end
 
             config.vm.provision "shell", privileged: true do |s|
