@@ -62,8 +62,7 @@ do
     sshpass -f /tmp/pass.txt ssh-copy-id -f -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa root@$node
 done
 
-
-
+echo "Setting up munge key"
 dd if=/dev/urandom of=/etc/munge/munge.key iflag=fullblock bs=1024 count=1
 chown munge:munge /etc/munge/munge.key
 chmod 600 /etc/munge/munge.key
@@ -76,14 +75,14 @@ systemctl enable postfix
 systemctl start postfix
 
 
-ls /root/rpmbuild/RPMS/x86_64/*.rpm
-if [[ $? == 2 ]]; then
-cd /root/
-wget -q -O slurm-19.05.0.tar.bz2 https://download.schedmd.com/slurm/slurm-19.05.0.tar.bz2 && \
-rpmbuild -ta slurm-19.05.0.tar.bz2 && \
-rpm -Uvh /root/rpmbuild/RPMS/x86_64/*.rpm 
+if ls /root/rpmbuild/RPMS/x86_64/*.rpm >/dev/null 2>&1; then
+  echo "RPM already exist"
+else
+  cd /root/
+  wget -q -O slurm-19.05.0.tar.bz2 https://download.schedmd.com/slurm/slurm-19.05.0.tar.bz2 && \
+  rpmbuild -ta slurm-19.05.0.tar.bz2 && \
+  rpm -Uvh /root/rpmbuild/RPMS/x86_64/*.rpm   
 fi
-
 
 cp /vagrant/slurm.conf /etc/slurm/slurm.conf
 cp /vagrant/slurmdbd.conf /etc/slurm/slurmdbd.conf
