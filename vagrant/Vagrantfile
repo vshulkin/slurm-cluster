@@ -137,21 +137,21 @@ echo "Sending munge.key out to the compute nodes"
 pdcp /etc/munge/munge.key /etc/munge
 pdsh "chown munge:munge /etc/munge/munge.key"
 pdsh "chmod 400 /etc/munge/munge.key"
+pdsh "systemctl start munge"
 
-
-echo "Sending the slurm.conf out to the compute nodes and restarting slurmd"
+echo "Sending the slurm.conf out to the compute nodes and starting slurmd"
 pdsh "mkdir -p /etc/slurm"
 pdcp /etc/slurm/slurm.conf /etc/slurm
-pdsh "systemctl restart slurmd"
+pdsh "systemctl start slurmd"
 
 
-CLUSTER=`sacctmgr -i list cluster | grep cluster`
-if [[ -n $CLUSTER ]]; then
-  sacctmgr -i delete cluster cluster
-else
+CLUSTER=`sacctmgr -i list cluster | grep cluster || true`
+if [[ -z "$CLUSTER" ]]; then
   sacctmgr -i create cluster cluster
   sacctmgr -i create account cluster_account
   sacctmgr -i create user steve account=cluster_account
+else
+  sacctmgr -i delete cluster cluster
 fi
 
 systemctl start slurmctld
